@@ -1,0 +1,19 @@
+[neovim]
+binary = "wsl"
+args = ["bash", "-lc", "nvim"]
+
+[ui]
+# This is the "Nuclear" option for removing the top bar
+frame = "none"
+maximized = true
+title-hidden = true 
+idle = false
+
+[window]
+# Matches your WezTerm "Non-Resizable" requirement
+resizable = false
+decorations = false
+padding_top = 10
+padding_left = 10
+padding_right = 0
+padding_bottom = 0
