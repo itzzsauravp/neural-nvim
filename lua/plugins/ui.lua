@@ -38,7 +38,23 @@ return {
   {
     "DNLHC/glance.nvim",
     config = function()
-      require("glance").setup({})
+      require("glance").setup({
+        height = 20,
+        border = {
+          enable = true,
+          top_char = "―",
+          bottom_char = "―",
+        },
+        theme = {
+          enable = true,
+          mode = 'brighten',
+        },
+        mappings = {
+          list = {
+            ['q'] = require('glance').actions.close,
+          },
+        },
+      })
     end,
   },
 }

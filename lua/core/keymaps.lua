@@ -83,8 +83,15 @@ vim.api.nvim_create_autocmd('LspAttach', {
     keymap.set('n', 'gr', '<CMD>Glance references<CR>', { buffer = ev.buf, desc = "Peek References" })
 
     -- Standard LSP Actions
-    keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = ev.buf, desc = "Hover Documentation" })
-    keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { buffer = ev.buf, desc = "Code Action" })
+    vim.keymap.set('n', 'K', function()
+      vim.lsp.buf.hover({ border = "rounded" })
+    end, { desc = "Hover Documentation" })
+
+    -- For Code Actions
+    vim.keymap.set('n', '<leader>ca', function()
+      vim.lsp.buf.code_action({ border = "rounded" })
+    end, { desc = "Code Action" })
+
     keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { buffer = ev.buf, desc = "Rename Symbol" })
   end,
 })
@@ -150,3 +157,12 @@ vim.keymap.set("n", "<C-Left>", ":vertical resize +5<CR>", { desc = "Resize Wind
 -- Horizontal Resizing (Height)
 vim.keymap.set("n", "<C-Up>", ":resize +5<CR>", { desc = "Resize Window Up" })
 vim.keymap.set("n", "<C-Down>", ":resize -5<CR>", { desc = "Resize Window Down" })
+
+-- Gruvbox background is usually #282828.
+-- We'll make popups #1d2021 (Darker) to create "layers."
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#1d2021" })
+vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#ebdbb2", bg = "#1d2021" })
+
+-- This ensures the completion menu (syntax) matches
+vim.api.nvim_set_hl(0, "Pmenu", { bg = "#1d2021", fg = "#ebdbb2" })
+vim.api.nvim_set_hl(0, "PmenuSel", { bg = "#504945", fg = "#ebdbb2" })

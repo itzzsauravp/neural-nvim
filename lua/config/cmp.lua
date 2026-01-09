@@ -8,8 +8,8 @@ cmp.setup({
         end,
     },
     mapping = cmp.mapping.preset.insert({
-        ["<C-Space>"] = cmp.mapping.complete(),   -- trigger completion
-        ["<CR>"] = cmp.mapping.confirm({ select = true }),  -- confirm selection
+        ["<C-Space>"] = cmp.mapping.complete(),            -- trigger completion
+        ["<CR>"] = cmp.mapping.confirm({ select = true }), -- confirm selection
         ["<Tab>"] = cmp.mapping.select_next_item(),
         ["<S-Tab>"] = cmp.mapping.select_prev_item(),
     }),
@@ -19,6 +19,9 @@ cmp.setup({
         { name = "buffer" },
         { name = "path" },
     }),
-    experimental = { ghost_text = true },  -- shows inline preview (like VS Code)
+    experimental = { ghost_text = true },         -- shows inline preview (like VS Code)
+    window = {
+        completion = cmp.config.window.bordered(), -- Adds the outline to syntax list
+        documentation = cmp.config.window.bordered(), -- Adds outline to the "info" box
+    },
 })
-
