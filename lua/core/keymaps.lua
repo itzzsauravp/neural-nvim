@@ -9,6 +9,12 @@ keymap.set("i", "jk", "<Esc>", { noremap = true, silent = true, desc = "Exit Ins
 -- Search
 keymap.set("n", "<leader>nh", ":nohlsearch<CR>", { desc = "Clear search highlights" })
 
+-- Toggle Word Wrap (Visual Separation)
+keymap.set("n", "<leader>ww", function()
+  vim.opt.wrap = not vim.opt.wrap:get()
+  vim.notify("Word Wrap: " .. (vim.opt.wrap:get() and "Enabled" or "Disabled"))
+end, { desc = "Toggle Word Wrap" })
+
 -----------------------------------------------------------
 -- 2. File & Buffer Management
 -----------------------------------------------------------
@@ -43,13 +49,20 @@ keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move to Bottom Window" })
 keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to Top Window" })
 
 -----------------------------------------------------------
--- 4. Diagnostics (Global)
+-- 4. Diagnostics (Global) - Reading those red/yellow lines
 -----------------------------------------------------------
+-- This replaces leader e (which you use for Explorer)
+-- with leader df to see the error message in a soft dark window
+keymap.set('n', '<leader>df', function()
+  vim.diagnostic.open_float({ border = "rounded" })
+end, { desc = 'Diagnostic Float (Read Error)' })
+
 keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic' })
 keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic' })
-keymap.set('n', '<leader>df', vim.diagnostic.open_float, { desc = 'Diagnostic Float' })
 keymap.set('n', '<leader>dl', vim.diagnostic.setloclist, { desc = 'Diagnostic List (Quickfix)' })
 
+-- Close the location list window specifically
+keymap.set("n", "<leader>lc", ":lclose<CR>", { desc = "Close LocList Window" })
 -----------------------------------------------------------
 -- 5. LSP Specific Binds (Only active when LSP is attached)
 -----------------------------------------------------------
