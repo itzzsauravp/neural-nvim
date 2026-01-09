@@ -19,13 +19,3 @@ These are the only keys you really need to know to move around:
 | `jk` | Escape to Normal Mode |
 
 you can find and edit these to your likings from the `keymaps.lua`
-
-## How to Install
-
-I included a minimal script to handle the backup and installation:
-
-```bash
-chmod +x install.sh
-./install.sh
-```
-hopefully this works havent tried
