@@ -1,0 +1,8 @@
+# Neovim swap and undo files
+*.swp
+*.swo
+undo/
+sessions/
+
+# Plugin manager folders (Lazy handles this locally)
+lazy-lock.json
