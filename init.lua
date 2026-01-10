@@ -30,6 +30,9 @@ require("core.options")
 require("core.keymaps")
 require("config.lsp")
 
+-- Apply colorscheme
+vim.cmd.colorscheme("rose-pine")
+
 -- 5. Dashboard & Nvim-Tree Startup Logic
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
