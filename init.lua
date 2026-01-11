@@ -29,6 +29,7 @@ require("lazy").setup({
 require("core.options")
 require("core.keymaps")
 require("config.lsp")
+require("config.bridge").setup()
 
 -- Apply colorscheme
 vim.cmd.colorscheme("rose-pine")
