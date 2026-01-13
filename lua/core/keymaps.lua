@@ -11,8 +11,8 @@ keymap.set("n", "<leader>nh", ":nohlsearch<CR>", { desc = "Clear search highligh
 
 -- Toggle Word Wrap (Visual Separation)
 keymap.set("n", "<leader>ww", function()
-  vim.opt.wrap = not vim.opt.wrap:get()
-  vim.notify("Word Wrap: " .. (vim.opt.wrap:get() and "Enabled" or "Disabled"))
+	vim.opt.wrap = not vim.opt.wrap:get()
+	vim.notify("Word Wrap: " .. (vim.opt.wrap:get() and "Enabled" or "Disabled"))
 end, { desc = "Toggle Word Wrap" })
 
 -----------------------------------------------------------
@@ -28,9 +28,23 @@ keymap.set("n", "<S-L>", ":bnext<CR>", { desc = "Next Buffer" })
 keymap.set("n", "<S-H>", ":bprevious<CR>", { desc = "Prev Buffer" })
 keymap.set("n", "<leader>c", ":bd<CR>", { desc = "Close Current Buffer" })
 
+-- NEW: Advanced Buffer Closing (VS Code Style)
+-- Close all buffers
+keymap.set("n", "<leader>ba", ":%bd<CR>", { desc = "Close All Buffers" })
+
+-- Close all buffers EXCEPT the current one
+keymap.set("n", "<leader>bo", ":%bd|e#|bd#<CR>", { desc = "Close Others (Buffer Only)" })
+
+-- Close buffers to the LEFT or RIGHT (Using Bufferline commands)
+keymap.set("n", "<leader>br", ":BufferLineCloseRight<CR>", { desc = "Close Buffers to the Right" })
+keymap.set("n", "<leader>bl", ":BufferLineCloseLeft<CR>", { desc = "Close Buffers to the Left" })
+
 -- Buffer Ordering (Bufferline)
-keymap.set("n", "<leader>bl", ":BufferLineMoveNext<CR>", { desc = "Move buffer right" })
-keymap.set("n", "<leader>bh", ":BufferLineMovePrev<CR>", { desc = "Move buffer left" })
+keymap.set("n", "<leader>bL", ":BufferLineMoveNext<CR>", { desc = "Move buffer right" })
+keymap.set("n", "<leader>bH", ":BufferLineMovePrev<CR>", { desc = "Move buffer left" })
+
+-- Force close current buffer (ignore unsaved changes)
+keymap.set("n", "<leader>C", ":bd!<CR>", { desc = "Force Close Current Buffer" })
 
 -----------------------------------------------------------
 -- 3. Layout & Window Management
@@ -53,60 +67,60 @@ keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to Top Window" })
 -----------------------------------------------------------
 -- This replaces leader e (which you use for Explorer)
 -- with leader df to see the error message in a soft dark window
-keymap.set('n', '<leader>df', function()
-  vim.diagnostic.open_float({ border = "rounded" })
-end, { desc = 'Diagnostic Float (Read Error)' })
+keymap.set("n", "<leader>df", function()
+	vim.diagnostic.open_float({ border = "rounded" })
+end, { desc = "Diagnostic Float (Read Error)" })
 
-keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic' })
-keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic' })
-keymap.set('n', '<leader>dl', vim.diagnostic.setloclist, { desc = 'Diagnostic List (Quickfix)' })
+keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic" })
+keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic" })
+keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Diagnostic List (Quickfix)" })
 
 -- Close the location list window specifically
 keymap.set("n", "<leader>lc", ":lclose<CR>", { desc = "Close LocList Window" })
 -----------------------------------------------------------
 -- 5. LSP Specific Binds (Only active when LSP is attached)
 -----------------------------------------------------------
-vim.api.nvim_create_autocmd('LspAttach', {
-  callback = function(ev)
-    local opts = { buffer = ev.buf }
-    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function(ev)
+		local opts = { buffer = ev.buf }
+		local client = vim.lsp.get_client_by_id(ev.data.client_id)
 
-    -- Universal Go-To-Definition (Multi-language support)
-    keymap.set('n', 'gd', function()
-      if client and client.name == "ts_ls" then
-        client:request("workspace/executeCommand", {
-          command = "_typescript.goToSourceDefinition",
-          arguments = { vim.uri_from_bufnr(ev.buf), vim.lsp.util.make_position_params().position },
-        }, function(err, result)
-          if err or not result or not result[1] then
-            vim.lsp.buf.definition()
-          else
-            vim.lsp.util.show_document(result[1], client.offset_encoding, { focus = true })
-          end
-        end, ev.buf)
-      else
-        -- Standard for Rust, Go, C, Odin, etc.
-        vim.lsp.buf.definition()
-      end
-    end, { buffer = ev.buf, desc = "Go to Definition" })
+		-- Universal Go-To-Definition (Multi-language support)
+		keymap.set("n", "gd", function()
+			if client and client.name == "ts_ls" then
+				client:request("workspace/executeCommand", {
+					command = "_typescript.goToSourceDefinition",
+					arguments = { vim.uri_from_bufnr(ev.buf), vim.lsp.util.make_position_params().position },
+				}, function(err, result)
+					if err or not result or not result[1] then
+						vim.lsp.buf.definition()
+					else
+						vim.lsp.util.show_document(result[1], client.offset_encoding, { focus = true })
+					end
+				end, ev.buf)
+			else
+				-- Standard for Rust, Go, C, Odin, etc.
+				vim.lsp.buf.definition()
+			end
+		end, { buffer = ev.buf, desc = "Go to Definition" })
 
-    -- Peek Views (Glance)
-    keymap.set('n', 'gp', '<CMD>Glance definitions<CR>', { buffer = ev.buf, desc = "Peek Definition" })
-    keymap.set('n', 'gy', '<CMD>Glance type_definitions<CR>', { buffer = ev.buf, desc = "Peek Type" })
-    keymap.set('n', 'gr', '<CMD>Glance references<CR>', { buffer = ev.buf, desc = "Peek References" })
+		-- Peek Views (Glance)
+		keymap.set("n", "gp", "<CMD>Glance definitions<CR>", { buffer = ev.buf, desc = "Peek Definition" })
+		keymap.set("n", "gy", "<CMD>Glance type_definitions<CR>", { buffer = ev.buf, desc = "Peek Type" })
+		keymap.set("n", "gr", "<CMD>Glance references<CR>", { buffer = ev.buf, desc = "Peek References" })
 
-    -- Standard LSP Actions
-    vim.keymap.set('n', 'K', function()
-      vim.lsp.buf.hover({ border = "rounded" })
-    end, { desc = "Hover Documentation" })
+		-- Standard LSP Actions
+		vim.keymap.set("n", "K", function()
+			vim.lsp.buf.hover({ border = "rounded" })
+		end, { desc = "Hover Documentation" })
 
-    -- For Code Actions
-    vim.keymap.set('n', '<leader>ca', function()
-      vim.lsp.buf.code_action({ border = "rounded" })
-    end, { desc = "Code Action" })
+		-- For Code Actions
+		vim.keymap.set("n", "<leader>ca", function()
+			vim.lsp.buf.code_action({ border = "rounded" })
+		end, { desc = "Code Action" })
 
-    keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { buffer = ev.buf, desc = "Rename Symbol" })
-  end,
+		keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { buffer = ev.buf, desc = "Rename Symbol" })
+	end,
 })
 
 -----------------------------------------------------------
@@ -134,29 +148,29 @@ keymap.set("n", "<leader>gg", ":LazyGit<CR>", { desc = "Lazygit Terminal" })
 local keymap = vim.keymap
 
 -- Normal mode toggles (Mapping both because of terminal behavior)
-keymap.set('n', '<C-/>', '<CMD>ToggleTerm<CR>', { desc = "Toggle Terminal" })
-keymap.set('n', '<C-_>', '<CMD>ToggleTerm<CR>', { desc = "Toggle Terminal" })
+keymap.set("n", "<C-/>", "<CMD>ToggleTerm<CR>", { desc = "Toggle Terminal" })
+keymap.set("n", "<C-_>", "<CMD>ToggleTerm<CR>", { desc = "Toggle Terminal" })
 
 function _G.set_terminal_keymaps()
-  local opts = { buffer = 0 }
-  keymap.set('t', 'jk', [[<C-\><C-n>]], opts)
+	local opts = { buffer = 0 }
+	keymap.set("t", "jk", [[<C-\><C-n>]], opts)
 
-  -- Toggle OFF from inside the terminal
-  keymap.set('t', '<C-/>', [[<C-\><C-n><CMD>ToggleTerm<CR>]], opts)
-  keymap.set('t', '<C-_>', [[<C-\><C-n><CMD>ToggleTerm<CR>]], opts)
+	-- Toggle OFF from inside the terminal
+	keymap.set("t", "<C-/>", [[<C-\><C-n><CMD>ToggleTerm<CR>]], opts)
+	keymap.set("t", "<C-_>", [[<C-\><C-n><CMD>ToggleTerm<CR>]], opts)
 
-  -- Navigation
-  keymap.set('t', '<C-h>', [[<C-\><C-n><C-w>h]], opts)
-  keymap.set('t', '<C-j>', [[<C-\><C-n><C-w>j]], opts)
-  keymap.set('t', '<C-k>', [[<C-\><C-n><C-w>k]], opts)
-  keymap.set('t', '<C-l>', [[<C-\><C-n><C-w>l]], opts)
+	-- Navigation
+	keymap.set("t", "<C-h>", [[<C-\><C-n><C-w>h]], opts)
+	keymap.set("t", "<C-j>", [[<C-\><C-n><C-w>j]], opts)
+	keymap.set("t", "<C-k>", [[<C-\><C-n><C-w>k]], opts)
+	keymap.set("t", "<C-l>", [[<C-\><C-n><C-w>l]], opts)
 end
 
 vim.api.nvim_create_autocmd("TermOpen", {
-  pattern = "term://*",
-  callback = function()
-    set_terminal_keymaps()
-  end,
+	pattern = "term://*",
+	callback = function()
+		set_terminal_keymaps()
+	end,
 })
 
 -----------------------------------------------------------
