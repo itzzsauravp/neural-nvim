@@ -193,3 +193,11 @@ vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#ebdbb2", bg = "#1d2021" })
 -- This ensures the completion menu (syntax) matches
 vim.api.nvim_set_hl(0, "Pmenu", { bg = "#1d2021", fg = "#ebdbb2" })
 vim.api.nvim_set_hl(0, "PmenuSel", { bg = "#504945", fg = "#ebdbb2" })
+
+-----------------------------------------------------------
+-- 9. Git Graph binds
+-----------------------------------------------------------
+-- Open Git Graph
+keymap.set("n", "<leader>gl", function()
+	require('gitgraph').draw({}, { all = true, max_count = 5000 })
+end, { desc = "Git Graph (Visual Log)" })
