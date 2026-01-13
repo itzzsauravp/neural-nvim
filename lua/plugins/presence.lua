@@ -13,19 +13,21 @@ return {
       timeout = 300000,
     },
     text = {
-      -- This function finds the extension (e.g., .odin) and displays it
+      -- Terminal status for ToggleTerm
+      terminal = "$ sudo rm -rf opps --dry-run",
+
       editing = function(opts)
         local ext = opts.filename:match("^.+(%..+)$") or ""
-        return "Editing a " .. ext .. " file"
+        return "Editing " .. ext .. " file"
       end,
 
       viewing = function(opts)
         local ext = opts.filename:match("^.+(%..+)$") or ""
-        return "Inspecting a " .. ext .. " file"
+        return "Viewing " .. ext .. " file"
       end,
 
-      file_browser = "In Explorer",
-      workspace = "",
+      file_browser = "File Browser",
+      workspace = "¯\\_(ツ)_/¯",
     },
   },
 }
