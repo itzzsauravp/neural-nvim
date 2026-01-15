@@ -1,6 +1,22 @@
 return {
   'isakbm/gitgraph.nvim',
   dependencies = { 'sindrets/diffview.nvim' },
+  keys = {
+    {
+      "<leader>gl",
+      function()
+        require('gitgraph').draw({}, { all = true, max_count = 5000 })
+        -- Set buffer local options to prevent E37/E162
+        local buf = vim.api.nvim_get_current_buf()
+        vim.bo[buf].buftype = 'nofile'
+        vim.bo[buf].bufhidden = 'wipe'
+        vim.bo[buf].swapfile = false
+        -- Optional: Press 'q' to quit the graph window
+        vim.keymap.set('n', 'q', ':close<CR>', { buffer = buf, silent = true })
+      end,
+      desc = "GitGraph - Draw",
+    },
+  },
   opts = {
     symbols = {
       merge_commit = '',
