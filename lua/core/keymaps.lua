@@ -16,8 +16,9 @@ keymap.set("n", "<leader>ww", function()
 end, { desc = "Toggle Word Wrap" })
 
 -----------------------------------------------------------
--- 2. File & Buffer Management
+-- 2. File & Buffer Management (Enhanced with BufDelete)
 -----------------------------------------------------------
+
 -- Quick Save/Quit
 keymap.set("n", "<leader>w", ":w<CR>", { desc = "Save file" })
 keymap.set("n", "<leader>q", ":qa<CR>", { desc = "Quit all" })
@@ -26,14 +27,19 @@ keymap.set("n", "<leader>x", ":x<CR>", { desc = "Save and Close" })
 -- Buffer Navigation (Shift + H/L)
 keymap.set("n", "<S-L>", ":bnext<CR>", { desc = "Next Buffer" })
 keymap.set("n", "<S-H>", ":bprevious<CR>", { desc = "Prev Buffer" })
-keymap.set("n", "<leader>c", ":bd<CR>", { desc = "Close Current Buffer" })
+
+-- Smart Close Current Buffer (Using bufdelete.nvim)
+-- This prevents the "No-Name" buffer and keeps your window layout stable
+keymap.set("n", "<leader>c", ":Bdelete<CR>", { desc = "Close Current Buffer" })
+keymap.set("n", "<leader>C", ":Bdelete!<CR>", { desc = "Force Close Current Buffer" })
 
 -- NEW: Advanced Buffer Closing (VS Code Style)
 -- Close all buffers
 keymap.set("n", "<leader>ba", ":%bd<CR>", { desc = "Close All Buffers" })
 
 -- Close all buffers EXCEPT the current one
-keymap.set("n", "<leader>bo", ":%bd|e#|bd#<CR>", { desc = "Close Others (Buffer Only)" })
+-- Using Bdelete prevents the screen from flickering to an empty buffer
+keymap.set("n", "<leader>bo", ":%bd|e#|Bdelete#<CR>", { desc = "Close Others" })
 
 -- Close buffers to the LEFT or RIGHT (Using Bufferline commands)
 keymap.set("n", "<leader>br", ":BufferLineCloseRight<CR>", { desc = "Close Buffers to the Right" })
@@ -42,9 +48,6 @@ keymap.set("n", "<leader>bl", ":BufferLineCloseLeft<CR>", { desc = "Close Buffer
 -- Buffer Ordering (Bufferline)
 keymap.set("n", "<leader>bL", ":BufferLineMoveNext<CR>", { desc = "Move buffer right" })
 keymap.set("n", "<leader>bH", ":BufferLineMovePrev<CR>", { desc = "Move buffer left" })
-
--- Force close current buffer (ignore unsaved changes)
-keymap.set("n", "<leader>C", ":bd!<CR>", { desc = "Force Close Current Buffer" })
 
 -----------------------------------------------------------
 -- 3. Layout & Window Management
@@ -199,5 +202,5 @@ vim.api.nvim_set_hl(0, "PmenuSel", { bg = "#504945", fg = "#ebdbb2" })
 -----------------------------------------------------------
 -- Open Git Graph
 keymap.set("n", "<leader>gl", function()
-	require('gitgraph').draw({}, { all = true, max_count = 5000 })
+	require("gitgraph").draw({}, { all = true, max_count = 5000 })
 end, { desc = "Git Graph (Visual Log)" })
