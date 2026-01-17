@@ -3,12 +3,12 @@ return {
 	"goolord/alpha-nvim",
 	lazy = false,
 	priority = 1000,
-	dependencies = { "nvim-tree/nvim-web-devicons" },
+	dependencies = { "nvim-web-devicons" },
 	config = function()
 		local alpha = require("alpha")
 		local dashboard = require("alpha.themes.dashboard")
 
-		-- 1. THE HEADER (ASCII ART - NEURAL)
+		-- [Your Header/Buttons/Footer logic remains the same]
 		dashboard.section.header.val = {
 			[[                                                     ]],
 			[[  ███╗   ██╗███████╗██╗   ██╗██████╗  █████╗ ██╗     ]],
@@ -18,11 +18,10 @@ return {
 			[[  ██║ ╚████║███████╗╚██████╔╝██║  ██║██║  ██║███████╗]],
 			[[  ╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝]],
 			[[                                                     ]],
-			[[               N E U R A L  •  I D E                 ]],
+			[[                N E U R A L  •  I D E                ]],
 			[[                                                     ]],
 		}
 
-		-- 2. THE MENU (Quick Actions)
 		dashboard.section.buttons.val = {
 			dashboard.button("n", "  New file", ":ene <BAR> startinsert <CR>"),
 			dashboard.button("f", "󰈞  Find file", ":Telescope find_files<CR>"),
@@ -31,33 +30,55 @@ return {
 			dashboard.button("q", "󰅚  Quit", ":qa<CR>"),
 		}
 
-		-- 3. THE DYNAMIC FOOTER (Plugin count + Start time)
-		local function get_footer()
-			local stats = require("lazy").stats()
-			-- Calculate startup time in ms
-			local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
-			return "⚡ " .. stats.count .. " plugins loaded in " .. ms .. "ms"
-		end
+		local alpha_group = vim.api.nvim_create_augroup("AlphaLogic", { clear = true })
 
-		dashboard.section.footer.val = get_footer()
-		dashboard.section.footer.opts.hl = "Comment"
-		dashboard.section.header.opts.hl = "Function"
-
-		-- Auto-open Alpha when all buffers are closed, safely
-		vim.api.nvim_create_autocmd("BufDelete", {
+		-- 1. Auto-close Alpha when a real file is opened
+		vim.api.nvim_create_autocmd("BufEnter", {
+			group = alpha_group,
 			callback = function()
 				local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+				if #bufs > 1 then
+					for _, buf in ipairs(bufs) do
+						if vim.bo[buf.bufnr].filetype == "alpha" then
+							vim.api.nvim_buf_delete(buf.bufnr, { force = true })
+						end
+					end
+				end
+			end,
+		})
 
-				-- If only one buffer remains and we are deleting it
-				if #bufs <= 1 then
-					-- Schedule the check for 'just after' the delete happens
-					vim.schedule(function()
-						local current_bufs = vim.fn.getbufinfo({ buflisted = 1 })
-						if #current_bufs == 0 then
+		-- 2. Open Alpha and WIPE the No-Name buffer
+		vim.api.nvim_create_autocmd("BufDelete", {
+			group = alpha_group,
+			callback = function()
+				vim.schedule(function()
+					local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+
+					-- Filter out NvimTree from the count so it doesn't count as a "real" buffer
+					local real_bufs = {}
+					for _, b in ipairs(bufs) do
+						local ft = vim.bo[b.bufnr].filetype
+						if ft ~= "NvimTree" and ft ~= "alpha" then
+							table.insert(real_bufs, b)
+						end
+					end
+
+					-- If no real buffers are left, or only a No-Name is left
+					if #real_bufs == 0 then
+						-- Check if we are currently looking at a No-Name buffer
+						local curr_buf = vim.api.nvim_get_current_buf()
+						local name = vim.api.nvim_buf_get_name(curr_buf)
+						local ft = vim.bo[curr_buf].filetype
+
+						if name == "" and ft == "" then
+							vim.cmd("Alpha")
+							-- WIPEOUT (not just delete) the empty buffer to remove it from tabline
+							vim.api.nvim_buf_delete(curr_buf, { force = true })
+						elseif ft ~= "alpha" then
 							vim.cmd("Alpha")
 						end
-					end)
-				end
+					end
+				end)
 			end,
 		})
 

@@ -14,7 +14,7 @@ return {
     },
     text = {
       -- Terminal status for ToggleTerm
-      terminal = "$ sudo rm -rf opps --dry-run",
+      terminal = "$ In Terminal",
 
       editing = function(opts)
         local ext = opts.filename:match("^.+(%..+)$") or ""

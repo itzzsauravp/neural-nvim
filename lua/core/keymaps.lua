@@ -16,7 +16,7 @@ keymap.set("n", "<leader>ww", function()
 end, { desc = "Toggle Word Wrap" })
 
 -----------------------------------------------------------
--- 2. File & Buffer Management (Enhanced with BufDelete)
+-- 2. File & Buffer Management
 -----------------------------------------------------------
 
 -- Quick Save/Quit
@@ -24,30 +24,30 @@ keymap.set("n", "<leader>w", ":w<CR>", { desc = "Save file" })
 keymap.set("n", "<leader>q", ":qa<CR>", { desc = "Quit all" })
 keymap.set("n", "<leader>x", ":x<CR>", { desc = "Save and Close" })
 
--- Buffer Navigation (Shift + H/L)
+-- Buffer Navigation
 keymap.set("n", "<S-L>", ":bnext<CR>", { desc = "Next Buffer" })
 keymap.set("n", "<S-H>", ":bprevious<CR>", { desc = "Prev Buffer" })
 
--- Smart Close Current Buffer (Using bufdelete.nvim)
--- This prevents the "No-Name" buffer and keeps your window layout stable
+-- Close Current Buffer
 keymap.set("n", "<leader>c", ":Bdelete<CR>", { desc = "Close Current Buffer" })
-keymap.set("n", "<leader>C", ":Bdelete!<CR>", { desc = "Force Close Current Buffer" })
 
--- NEW: Advanced Buffer Closing (VS Code Style)
--- Close all buffers
-keymap.set("n", "<leader>ba", ":%bd<CR>", { desc = "Close All Buffers" })
+-- Improved Close All: Wipes everything and forces Alpha
+keymap.set("n", "<leader>ba", ":%bwipeout! | Alpha<CR>", { desc = "Clean Reset to Dashboard" })
 
--- Close all buffers EXCEPT the current one
--- Using Bdelete prevents the screen from flickering to an empty buffer
-keymap.set("n", "<leader>bo", ":%bd|e#|Bdelete#<CR>", { desc = "Close Others" })
+-- CLOSE OTHERS
+keymap.set("n", "<leader>bo", function()
+	local current = vim.api.nvim_get_current_buf()
+	local bufs = vim.api.nvim_list_bufs()
+	for _, bufnr in ipairs(bufs) do
+		if bufnr ~= current and vim.api.nvim_buf_is_valid(bufnr) and vim.bo[bufnr].buflisted then
+			vim.cmd("Bdelete " .. bufnr)
+		end
+	end
+end, { desc = "Close Others" })
 
--- Close buffers to the LEFT or RIGHT (Using Bufferline commands)
-keymap.set("n", "<leader>br", ":BufferLineCloseRight<CR>", { desc = "Close Buffers to the Right" })
-keymap.set("n", "<leader>bl", ":BufferLineCloseLeft<CR>", { desc = "Close Buffers to the Left" })
-
--- Buffer Ordering (Bufferline)
-keymap.set("n", "<leader>bL", ":BufferLineMoveNext<CR>", { desc = "Move buffer right" })
-keymap.set("n", "<leader>bH", ":BufferLineMovePrev<CR>", { desc = "Move buffer left" })
+-- Bufferline Controls
+keymap.set("n", "<leader>br", ":BufferLineCloseRight<CR>", { desc = "Close Right" })
+keymap.set("n", "<leader>bl", ":BufferLineCloseLeft<CR>", { desc = "Close Left" })
 
 -----------------------------------------------------------
 -- 3. Layout & Window Management
