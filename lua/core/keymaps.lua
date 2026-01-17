@@ -204,3 +204,13 @@ vim.api.nvim_set_hl(0, "PmenuSel", { bg = "#504945", fg = "#ebdbb2" })
 keymap.set("n", "<leader>gl", function()
 	require("gitgraph").draw({}, { all = true, max_count = 5000 })
 end, { desc = "Git Graph (Visual Log)" })
+
+-----------------------------------------------------------
+-- 10. Themes Stuff
+-----------------------------------------------------------
+-- Leader + th for Theme switcher
+vim.keymap.set("n", "<leader>th", function()
+	require("telescope.builtin").colorscheme({
+		enable_preview = true
+	})
+end, { desc = "Colorscheme Preview & Save" })

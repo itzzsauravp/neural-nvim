@@ -84,3 +84,30 @@ if vim.g.neovide then
   vim.g.neovide_remember_window_size = true
   vim.g.neovide_input_use_logo = 1
 end
+
+-- ========================================================================== --
+-- 6. THEME SELECTOR
+-- ========================================================================== --
+-- Path to store the theme name
+local theme_cache = vim.fn.stdpath("data") .. "/last_theme.txt"
+
+-- Function to load the saved theme
+local function load_theme()
+  local f = io.open(theme_cache, "r")
+  if f then
+    local name = f:read("*all"):gsub("%s+", "")
+    f:close()
+    if name ~= "" then
+      -- Use pcall so Neovim doesn't crash if the theme is missing
+      local ok = pcall(vim.cmd.colorscheme, name)
+      if ok then return end
+    end
+  end
+  -- YOUR DEFAULT FALLBACK
+  vim.cmd.colorscheme("habamax")
+end
+
+-- Wait until plugins are loaded to apply the saved theme
+vim.schedule(function()
+  load_theme()
+end)

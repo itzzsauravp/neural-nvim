@@ -54,3 +54,18 @@ vim.api.nvim_create_autocmd("VimEnter", {
 		end
 	end,
 })
+
+-- Create an autocmd to save the theme whenever it changes
+vim.api.nvim_create_autocmd("ColorScheme", {
+	callback = function(args)
+		-- Don't save if the theme is 'alpha' (the dashboard)
+		if args.match ~= "alpha" and args.match ~= "" then
+			local theme_cache = vim.fn.stdpath("data") .. "/last_theme.txt"
+			local f = io.open(theme_cache, "w")
+			if f then
+				f:write(args.match)
+				f:close()
+			end
+		end
+	end,
+})
